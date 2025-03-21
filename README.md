@@ -51,3 +51,9 @@ Implementasi ini dilakukan dengan membaca baris pertama dari permintaan HTTP men
 Dari milestone ini, saya belajar lebih dalam tentang cara kerja validasi request dalam server dan bagaimana server dapat menangani halaman yang tidak ditemukan. Selain itu, saya juga semakin memahami pentingnya menangani berbagai jenis request secara efisien agar server dapat memberikan pengalaman yang lebih baik kepada pengguna.
 
 Berikut ini adalah dokumentasi pengerjaan Milestone 3 berupa screenshot hasil eksekusi perintah `cargo run` pada `http://127.0.0.1:7878/bad`
+
+<br>
+
+Pada Milestone 4: Simulation slow response, saya mempelajari bagaimana server menangani permintaan yang membutuhkan waktu lebih lama untuk diproses. Dalam implementasi ini, saya menambahkan kasus ketika klien mengakses "GET /sleep HTTP/1.1", server akan melakukan penundaan selama 10 detik sebelum mengirim respons. Penundaan ini dilakukan menggunakan `thread::sleep(Duration::from_secs(10))` untuk mensimulasikan kondisi di mana server menghadapi proses yang lambat.
+
+Melalui milestone ini, saya menyadari pentingnya menangani permintaan yang membutuhkan waktu lama agar server tetap responsif dan tidak menghambat permintaan lainnya. Dari sini, saya semakin memahami mengapa implementasi multi-threading sangat penting dalam meningkatkan performa server, terutama dalam menangani banyak permintaan secara bersamaan.
