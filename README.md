@@ -39,3 +39,15 @@ Berikut ini adalah dokumentasi pengerjaan Milestone 2 berupa screenshot hasil ek
 
 <img src='img/commit2.png'>
 
+<br>
+
+
+## **Milestone 3: Validating request and selectively responding**
+
+Pada Milestone 3: Validating Request dan Selectively Responding, saya mempelajari bagaimana server dapat merespons permintaan klien berdasarkan URL yang diminta. Pada tahap ini, saya menambahkan validasi pada request HTTP sehingga server dapat membedakan antara halaman yang tersedia dan tidak tersedia. Jika klien meminta halaman utama dengan "GET / HTTP/1.1", server akan merespons dengan "hello.html" dan status "HTTP/1.1 200 OK". Jika klien meminta halaman yang tidak dikenal, server akan mengembalikan "404.html" dengan status "HTTP/1.1 404 NOT FOUND".
+
+Implementasi ini dilakukan dengan membaca baris pertama dari permintaan HTTP menggunakan BufReader. Kemudian, kondisi if digunakan untuk mengevaluasi apakah permintaan sesuai dengan halaman utama atau tidak. Setelah menentukan file yang harus dibaca, server mengirimkan respons dengan konten yang sesuai.
+
+Dari milestone ini, saya belajar lebih dalam tentang cara kerja validasi request dalam server dan bagaimana server dapat menangani halaman yang tidak ditemukan. Selain itu, saya juga semakin memahami pentingnya menangani berbagai jenis request secara efisien agar server dapat memberikan pengalaman yang lebih baik kepada pengguna.
+
+Berikut ini adalah dokumentasi pengerjaan Milestone 3 berupa screenshot hasil eksekusi perintah `cargo run` pada `http://127.0.0.1:7878/bad`
