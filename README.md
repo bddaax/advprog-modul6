@@ -52,8 +52,26 @@ Dari milestone ini, saya belajar lebih dalam tentang cara kerja validasi request
 
 Berikut ini adalah dokumentasi pengerjaan Milestone 3 berupa screenshot hasil eksekusi perintah `cargo run` pada `http://127.0.0.1:7878/bad`
 
+<img src='img/commit3.png'>
+
 <br>
+
+## **Milestone 4: Simulation Slow Response**
 
 Pada Milestone 4: Simulation slow response, saya mempelajari bagaimana server menangani permintaan yang membutuhkan waktu lebih lama untuk diproses. Dalam implementasi ini, saya menambahkan kasus ketika klien mengakses "GET /sleep HTTP/1.1", server akan melakukan penundaan selama 10 detik sebelum mengirim respons. Penundaan ini dilakukan menggunakan `thread::sleep(Duration::from_secs(10))` untuk mensimulasikan kondisi di mana server menghadapi proses yang lambat.
 
 Melalui milestone ini, saya menyadari pentingnya menangani permintaan yang membutuhkan waktu lama agar server tetap responsif dan tidak menghambat permintaan lainnya. Dari sini, saya semakin memahami mengapa implementasi multi-threading sangat penting dalam meningkatkan performa server, terutama dalam menangani banyak permintaan secara bersamaan.
+
+<br>
+
+## **Milestone 5: Multithreaded Server**
+
+Setelah memahami bagaimana server menangani permintaan dengan single-threaded pada milestone sebelumnya, saya menyadari bahwa server memiliki keterbatasan dalam menangani beberapa koneksi secara bersamaan. Pada Milestone 4, ketika ada permintaan yang membutuhkan waktu lama untuk diproses, seperti `/sleep`, permintaan lainnya harus menunggu hingga proses tersebut selesai. Hal ini membuat saya semakin memahami pentingnya implementasi multi-threading untuk meningkatkan efisiensi server. Oleh karena itu, pada Milestone 5, saya mengimplementasikan **ThreadPool** untuk memungkinkan server menangani banyak permintaan secara simultan tanpa saling menunggu.
+
+Dalam implementasi kode ini, **ThreadPool** digunakan untuk mengelola eksekusi tugas secara konkuren dengan membagi beban kerja ke beberapa thread pekerja (*Worker*). Saat server menerima request melalui `TcpListener`, request tersebut tidak langsung diproses dalam thread utama, melainkan dikirim ke salah satu thread dalam pool menggunakan `pool.execute(|| { handle_connection(stream); })`. Dengan mekanisme ini, beberapa request dapat diproses secara bersamaan tanpa menyebabkan bottleneck.
+
+**ThreadPool** dibuat dengan jumlah thread tetap yang ditentukan saat inisialisasi. Setiap **Worker** dalam pool menjalankan loop yang terus menerima tugas dari `mpsc::Receiver<Job>`, yang telah dikunci dengan `Arc<Mutex<T>>` untuk memastikan akses aman dari beberapa thread. Ketika thread pekerja menerima tugas, ia akan mengeksekusinya lalu kembali menunggu tugas berikutnya. Jika receiver berhenti mengirim tugas, thread akan keluar dari loop dan berhenti bekerja.
+
+Pada modifikasi kode di `main.rs`, server dibuat menggunakan `TcpListener` pada `127.0.0.1:7878` seperti sebelumnya, tetapi dengan tambahan **ThreadPool** yang memungkinkan eksekusi request secara paralel. Saat ada koneksi masuk, request tersebut dikirim ke **ThreadPool** dan ditangani oleh salah satu thread yang tersedia. Dengan cara ini, server dapat menangani request yang membutuhkan waktu lama, seperti `/sleep`, tanpa menghambat eksekusi request lainnya. Hal ini secara signifikan meningkatkan efisiensi dan performa server dalam menangani banyak klien sekaligus.
+
+Melalui milestone ini, saya semakin memahami bagaimana konsep concurrency dan paralelisme bekerja dalam pengembangan server. Saya juga menyadari pentingnya pengelolaan sumber daya agar server dapat bekerja secara optimal tanpa menghabiskan terlalu banyak memori atau CPU. Implementasi ini memberikan wawasan yang lebih mendalam mengenai bagaimana sistem multi-threading dapat diterapkan untuk meningkatkan skalabilitas aplikasi server.
