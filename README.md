@@ -44,7 +44,7 @@ Berikut ini adalah dokumentasi pengerjaan Milestone 2 berupa screenshot hasil ek
 
 ## **Milestone 3: Validating request and selectively responding**
 
-Pada Milestone 3: Validating Request dan Selectively Responding, saya mempelajari bagaimana server dapat merespons permintaan klien berdasarkan URL yang diminta. Pada tahap ini, saya menambahkan validasi pada request HTTP sehingga server dapat membedakan antara halaman yang tersedia dan tidak tersedia. Jika klien meminta halaman utama dengan "GET / HTTP/1.1", server akan merespons dengan "hello.html" dan status "HTTP/1.1 200 OK". Jika klien meminta halaman yang tidak dikenal, server akan mengembalikan "404.html" dengan status "HTTP/1.1 404 NOT FOUND".
+Pada Milestone 3: Validating Request dan Selectively Responding, saya mempelajari bagaimana server dapat merespons permintaan klien berdasarkan URL yang diminta. Pada tahap ini, saya menambahkan validasi pada request HTTP sehingga server dapat membedakan antara halaman yang tersedia dan tidak tersedia. Jika klien meminta halaman utama dengan `GET / HTTP/1.1`, server akan merespons dengan "hello.html" dan status `HTTP/1.1 200 OK`. Jika klien meminta halaman yang tidak dikenal, server akan mengembalikan "404.html" dengan status `HTTP/1.1 404 NOT FOUND`.
 
 Implementasi ini dilakukan dengan membaca baris pertama dari permintaan HTTP menggunakan BufReader. Kemudian, kondisi if digunakan untuk mengevaluasi apakah permintaan sesuai dengan halaman utama atau tidak. Setelah menentukan file yang harus dibaca, server mengirimkan respons dengan konten yang sesuai.
 
@@ -58,7 +58,7 @@ Berikut ini adalah dokumentasi pengerjaan Milestone 3 berupa screenshot hasil ek
 
 ## **Milestone 4: Simulation Slow Response**
 
-Pada Milestone 4: Simulation slow response, saya mempelajari bagaimana server menangani permintaan yang membutuhkan waktu lebih lama untuk diproses. Dalam implementasi ini, saya menambahkan kasus ketika klien mengakses "GET /sleep HTTP/1.1", server akan melakukan penundaan selama 10 detik sebelum mengirim respons. Penundaan ini dilakukan menggunakan `thread::sleep(Duration::from_secs(10))` untuk mensimulasikan kondisi di mana server menghadapi proses yang lambat.
+Pada Milestone 4: Simulation slow response, saya mempelajari bagaimana server menangani permintaan yang membutuhkan waktu lebih lama untuk diproses. Dalam implementasi ini, saya menambahkan kasus ketika klien mengakses `GET /sleep HTTP/1.1`, server akan melakukan penundaan selama 10 detik sebelum mengirim respons. Penundaan ini dilakukan menggunakan `thread::sleep(Duration::from_secs(10))` untuk mensimulasikan kondisi di mana server menghadapi proses yang lambat.
 
 Melalui milestone ini, saya menyadari pentingnya menangani permintaan yang membutuhkan waktu lama agar server tetap responsif dan tidak menghambat permintaan lainnya. Dari sini, saya semakin memahami mengapa implementasi multi-threading sangat penting dalam meningkatkan performa server, terutama dalam menangani banyak permintaan secara bersamaan.
 
@@ -75,3 +75,21 @@ Dalam implementasi kode ini, **ThreadPool** digunakan untuk mengelola eksekusi t
 Pada modifikasi kode di `main.rs`, server dibuat menggunakan `TcpListener` pada `127.0.0.1:7878` seperti sebelumnya, tetapi dengan tambahan **ThreadPool** yang memungkinkan eksekusi request secara paralel. Saat ada koneksi masuk, request tersebut dikirim ke **ThreadPool** dan ditangani oleh salah satu thread yang tersedia. Dengan cara ini, server dapat menangani request yang membutuhkan waktu lama, seperti `/sleep`, tanpa menghambat eksekusi request lainnya. Hal ini secara signifikan meningkatkan efisiensi dan performa server dalam menangani banyak klien sekaligus.
 
 Melalui milestone ini, saya semakin memahami bagaimana konsep concurrency dan paralelisme bekerja dalam pengembangan server. Saya juga menyadari pentingnya pengelolaan sumber daya agar server dapat bekerja secara optimal tanpa menghabiskan terlalu banyak memori atau CPU. Implementasi ini memberikan wawasan yang lebih mendalam mengenai bagaimana sistem multi-threading dapat diterapkan untuk meningkatkan skalabilitas aplikasi server.
+
+<br> 
+
+## **Bonus Reflection**
+
+Setelah berhasil mengimplementasikan **ThreadPool**, saya melakukan perbaikan lebih lanjut dengan mengganti metode `new` menjadi `build`. Perubahan ini bertujuan untuk meningkatkan keandalan dan keamanan dalam pembuatan thread pool dengan menambahkan mekanisme penanganan error yang lebih baik.
+
+Sebelumnya, metode `new` langsung menginisialisasi `ThreadPool` tanpa validasi ukuran atau kemungkinan penanganan error. Namun, setelah mempertimbangkan aspek ketahanan kode, perlu menggantinya dengan `build`, yang mengembalikan `Result<ThreadPool, &'static str>`. Dengan pendekatan ini, jika ada upaya membuat thread pool dengan ukuran 0, program tidak akan langsung panic, tetapi akan mengembalikan error yang dapat ditangani dengan lebih baik.
+
+Selain itu, perubahan ini juga meningkatkan keterbacaan dan maintainability kode karena pola penggunaan `build` lebih sesuai dengan praktik terbaik dalam Rust, yaitu menggunakan `Result` untuk menangani kemungkinan kegagalan dalam pembuatan objek. Dalam `main.rs`, inisialisasi thread pool kini dilakukan dengan:
+
+```rust
+let pool = ThreadPool::build(4).expect("Failed to create thread pool");
+```
+
+Pendekatan ini memastikan bahwa jika terjadi kesalahan dalam pembuatan thread pool, error akan langsung diketahui dengan pesan yang jelas, tanpa menyebabkan crash yang tidak terkendali.
+
+Dari perubahan ini, saya semakin memahami pentingnya desain API yang aman dan ergonomis. Implementasi ini juga memperkuat pemahaman saya tentang bagaimana Rust menangani error secara eksplisit melalui `Result`, sehingga kode menjadi lebih robust dan lebih mudah untuk diuji. 
